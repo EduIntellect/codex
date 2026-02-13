@@ -53,14 +53,34 @@ Normalizar cada instrucción parseada a un objeto homogéneo:
 - **Registro + inmediato**: `LDI Rn, imm`.
 - **Registro + registro**: `MOV`, `ADD`, `SUB`, `AND`, `OR`, `XOR`, `CMP`.
 - **Unario sobre registro**: `NOT`, `SHL`, `SHR`, `CMPZ`.
-- **Acceso memoria**: `LD Rn, [addr]`, `ST Rn, [addr]`.
-- **Control flujo**: `BZ addr`, `BN addr`, `BR addr`, `HALT`.
+- **Acceso a memoria**: `LD Rn, [addr]`, `ST Rn, [addr]`.
+- **Control de flujo**: `BZ addr`, `BN addr`, `BR addr`, `HALT`.
 
 ### Política de anchura y saturación
 Para consistencia didáctica:
 - Ancho fijo de palabra (p. ej. 16 bits).
 - Todas las operaciones aritmético-lógicas se enmascaran al ancho.
 - `S` se toma del bit más significativo; `Z` de resultado cero; `P` de paridad del resultado; `C` y `V` según reglas de suma/resta/desplazamiento.
+
+### Semántica explícita de flags (recomendada)
+Para evitar ambigüedad entre implementaciones:
+
+- **Operaciones aritméticas (`ADD`, `SUB`)**:
+  - `C`: acarreo de salida en suma / préstamo en resta.
+  - `V`: overflow con signo (complemento a dos).
+  - `S`: bit de signo del resultado enmascarado.
+  - `Z`: 1 si resultado es cero.
+  - `P`: paridad par del resultado.
+- **Operaciones lógicas (`AND`, `OR`, `XOR`, `NOT`, `MOV`, `LDI`, `LD`)**:
+  - `S`, `Z`, `P` derivados del valor resultante.
+  - `C=0`, `V=0` (convención simple docente).
+- **Desplazamientos (`SHL`, `SHR` lógicos)**:
+  - `C`: bit expulsado (MSB en `SHL`, LSB en `SHR`).
+  - `V=0` por tratarse de desplazamiento lógico.
+  - `S`, `Z`, `P` según resultado tras el desplazamiento.
+- **Comparaciones**:
+  - `CMP Rn, Rm`: calcula internamente `Rn - Rm`, actualiza flags como `SUB` y **no** escribe en RF.
+  - `CMPZ Rn`: compara `Rn` con cero (equivalente a evaluar `Rn - 0`), actualiza flags y **no** escribe en RF.
 
 ---
 
@@ -70,6 +90,11 @@ Para consistencia didáctica:
 - Leer celda de memoria en dirección `PC`.
 - Copiar contenido a `IR`.
 - Validar que sea instrucción ejecutable (si no, excepción didáctica).
+
+### Política de errores y rango (casos borde)
+- **Sin wrap-around silencioso**: ni el `PC` ni direcciones de memoria deben envolver módulo `N` automáticamente.
+- Si `PC` o una dirección de `LD/ST/BR/BZ/BN` quedan fuera de rango, la CPU pasa a **estado de error explícito** (`halted/error`) y se muestra mensaje pedagógico en UI.
+- Si una celda esperada como instrucción contiene dato inválido (o viceversa), también se detiene con error explícito y traza.
 
 ### Fase 2: Decode
 - Interpretar `IR.op` y determinar micro-acciones requeridas.
@@ -101,6 +126,13 @@ Para consistencia didáctica:
 - `BR` ignora flags.
 - `HALT` detiene ejecución sin evaluación de flags.
 
+### Mapeo fuente → memoria (carga del programa)
+- **Origen fijo recomendado**: dirección base `0` para simplificar docencia.
+- Cada **instrucción válida** ocupa 1 celda de memoria de programa.
+- **Líneas vacías o comentarios** no consumen dirección.
+- El campo `line` en `IR`/traza mantiene la correspondencia con la línea original del editor.
+- Los operandos `addr` en saltos y acceso a memoria se interpretan como **direcciones absolutas** de la tabla visual de memoria.
+
 ---
 
 ## 4) Arquitectura de la interfaz (frontend)
@@ -122,7 +154,7 @@ Para consistencia didáctica:
    - Marcadores visuales:
      - Celda apuntada por `PC`.
      - Última lectura/escritura.
-   - Opcional: filtros (rango direcciones, solo instrucciones, solo datos).
+   - Opcional: filtros (rango de direcciones, solo instrucciones, solo datos).
 
 ### Comportamiento UI recomendado
 - Modo **paso a paso por fase** (micro-step) y **paso por instrucción**.
