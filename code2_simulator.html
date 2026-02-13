@@ -1,109 +1,268 @@
 <!--
-GUÍA RÁPIDA PARA EL PROFESORADO (Google Sites / iframe)
-1) Publicación del HTML:
-   - Opción A (recomendada): subir este archivo a un hosting estático (GitHub Pages, Netlify, Vercel estático, servidor del centro).
-   - Opción B: Google Drive con enlace público (siempre que la URL final permita servir HTML embebible).
-   - Requisito: obtener una URL pública HTTPS del archivo.
+GUÍA PARA PROFESORADO: PUBLICACIÓN E INCRUSTACIÓN DE asmbasic Web
 
-2) Incrustar en Google Sites:
-   - En Google Sites: Insertar -> Incrustar -> URL (o código iframe en modo HTML embebido).
+1) Cómo publicar este HTML (archivo único, autocontenido)
+   - Opción recomendada: subir este archivo a un hosting estático con HTTPS:
+     * GitHub Pages
+     * Netlify (sitio estático)
+     * Vercel (estático)
+     * Servidor web del centro educativo
+   - Importante: debe quedar accesible mediante URL pública HTTPS.
+
+2) Cómo incrustarlo en Google Sites
+   - En Google Sites: Insertar -> Incrustar -> URL (o "Insertar código" con iframe).
    - Ejemplo de iframe:
-     <iframe src="URL_DEL_SIMULADOR" width="1000" height="700" style="border:0;"></iframe>
+     <iframe src="URL_DEL_SIMULADOR" width="900" height="600"></iframe>
 
-3) Dimensiones recomendadas:
-   - Mínimo sugerido: 900x600
-   - Recomendado para ver bien los 3 paneles: 1000x700 o superior
+3) Dimensiones mínimas recomendadas del iframe
+   - Mínimo: 900x600
+   - Recomendado para mejor legibilidad de los 3 paneles: 1000x700 o superior
 -->
 <!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Simulador CODE-2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>asmbasic Web</title>
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: Arial, sans-serif; background:#f4f6fb; color:#1f2937; }
-    .app { display:grid; grid-template-columns: 1.2fr 1fr 1fr; gap:10px; height:100vh; padding:10px; }
-    .panel { background:#fff; border:1px solid #dbe2ef; border-radius:8px; padding:10px; display:flex; flex-direction:column; min-height:0; }
-    h2 { margin:0 0 8px; font-size:16px; }
-    textarea { width:100%; min-height:240px; resize:vertical; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-    .controls { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; align-items:center; }
-    button { padding:6px 10px; border:1px solid #c8d2e1; background:#eef3ff; border-radius:6px; cursor:pointer; }
-    button:hover { background:#dde8ff; }
-    .range-wrap { display:flex; align-items:center; gap:6px; margin-top:8px; }
-    input[type="range"] { width:180px; }
-    #messages { margin-top:8px; min-height:64px; background:#f8fafc; border:1px solid #e5e7eb; border-radius:6px; padding:8px; font-size:13px; white-space:pre-wrap; overflow:auto; }
-    table { width:100%; border-collapse:collapse; font-size:13px; }
-    th, td { border:1px solid #e5e7eb; padding:4px 6px; text-align:center; }
-    th { background:#f3f6fc; position:sticky; top:0; }
-    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-    .kv { display:flex; justify-content:space-between; border:1px solid #e5e7eb; border-radius:6px; padding:5px 8px; background:#fafbff; }
-    .rf-wrap, .mem-wrap { overflow:auto; min-height:0; }
-    .flag { padding:2px 6px; border-radius:999px; border:1px solid #cbd5e1; background:#eef2ff; }
-    .on { background:#22c55e; color:#fff; border-color:#16a34a; }
-    .pc-row { background:#fef3c7; }
-    .last-mem { background:#dbeafe; }
+    :root {
+      --bg: #f3f5fb;
+      --panel: #ffffff;
+      --border: #d9e0ef;
+      --text: #1f2937;
+      --muted: #4b5563;
+      --accent: #335dff;
+      --ok: #0f9f59;
+      --warn: #b45309;
+      --err: #b91c1c;
+      --pc: #fff3cd;
+      --mem: #dbeafe;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+    .app {
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 10px;
+      padding: 10px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    h2 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+    h3 {
+      margin: 10px 0 6px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.35;
+      color: #111827;
+      background: #fbfdff;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+      align-items: center;
+    }
+    button {
+      padding: 6px 10px;
+      border: 1px solid #c8d2e1;
+      border-radius: 6px;
+      background: #eef3ff;
+      cursor: pointer;
+    }
+    button:hover { background: #dde8ff; }
+    .range-wrap {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    #speed { width: 180px; }
+    #messages {
+      margin-top: 8px;
+      min-height: 84px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #f8fafc;
+      padding: 8px;
+      font-size: 13px;
+      white-space: pre-wrap;
+      overflow: auto;
+    }
+    .meta {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px dashed var(--border);
+      padding-top: 8px;
+      line-height: 1.4;
+    }
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .kv {
+      display: flex;
+      justify-content: space-between;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 8px;
+      background: #fafbff;
+      font-size: 13px;
+    }
+    .flags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: 8px 0;
+    }
+    .flag {
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid #cbd5e1;
+      background: #eef2ff;
+      font-size: 12px;
+    }
+    .flag.on { background: var(--ok); color: #fff; border-color: #0f8c4f; }
+    .phase {
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 8px;
+      background: #f9fbff;
+      font-size: 13px;
+    }
+    .table-wrap { overflow: auto; min-height: 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 4px 6px;
+      text-align: center;
+    }
+    th { background: #f3f6fc; position: sticky; top: 0; }
+    .pc-row { background: var(--pc); }
+    .last-mem { background: var(--mem); }
+    .msg-ok { color: #111827; }
+    .msg-warn { color: var(--warn); }
+    .msg-err { color: var(--err); }
     @media (max-width: 980px) {
-      .app { grid-template-columns:1fr; height:auto; }
-      body { min-height:100vh; }
+      .app { grid-template-columns: 1fr; height: auto; }
+      body { min-height: 100vh; }
     }
   </style>
 </head>
 <body>
   <div class="app">
     <section class="panel">
-      <h2>Programa CODE-2</h2>
-      <textarea id="source">// Ejemplo
-LLI R0, 5
-LLI R1, 3
-ADDS R0, R1
-ST R0, 40
+      <h2>Editor asmbasic</h2>
+      <textarea id="source">// Programa de ejemplo
+LDI R0, 5
+LDI R1, 3
+ADD R0, R1
+ST R0, [40]
+CMPZ R0
+BZ 8
+LDI R2, 1
+BR 9
+LDI R2, 0
 HALT</textarea>
       <div class="controls">
         <button id="btnAssemble">Ensamblar</button>
         <button id="btnStep">Paso</button>
-        <button id="btnRun">Ejecutar</button>
+        <button id="btnRun">Run</button>
+        <button id="btnStop">Stop</button>
         <button id="btnReset">Reset</button>
       </div>
       <div class="range-wrap">
         <label for="speed">Velocidad (ms/paso):</label>
-        <input id="speed" type="range" min="50" max="1000" step="50" value="250" />
-        <span id="speedValue">250</span>
+        <input type="range" id="speed" min="50" max="1500" step="50" value="300" />
+        <span id="speedValue">300</span>
       </div>
-      <div id="messages"></div>
+      <div id="messages" class="msg-ok"></div>
+      <div class="meta">
+        ISA soportada: LDI, MOV, ADD, SUB, AND, OR, XOR, NOT, SHL, SHR, LD, ST, CMPZ, CMP, BZ, BN, BR, HALT.
+      </div>
     </section>
 
     <section class="panel">
-      <h2>CPU</h2>
+      <h2>Estado CPU</h2>
       <div class="grid2">
         <div class="kv"><span>PC</span><strong id="pc">0</strong></div>
-        <div class="kv"><span>SP</span><strong id="sp">0</strong></div>
         <div class="kv"><span>RT</span><strong id="rt">0</strong></div>
         <div class="kv"><span>IR.op</span><strong id="ir">-</strong></div>
+        <div class="kv"><span>Ciclos</span><strong id="cycles">0</strong></div>
       </div>
-      <div style="display:flex;gap:6px;margin:8px 0;flex-wrap:wrap;">
-        <span class="flag" id="fC">C:0</span><span class="flag" id="fS">S:0</span><span class="flag" id="fZ">Z:0</span><span class="flag" id="fP">P:0</span><span class="flag" id="fV">V:0</span>
+      <div class="flags">
+        <span class="flag" id="fC">C:0</span>
+        <span class="flag" id="fS">S:0</span>
+        <span class="flag" id="fZ">Z:0</span>
+        <span class="flag" id="fP">P:0</span>
+        <span class="flag" id="fV">V:0</span>
       </div>
-      <h2>Registros RF</h2>
-      <div class="rf-wrap">
-        <table id="rfTable"><thead><tr><th>Reg</th><th>Hex</th><th>Dec</th></tr></thead><tbody></tbody></table>
+      <div class="phase">Fase actual: <strong id="phase">idle</strong></div>
+      <h3>RF (R0..R7)</h3>
+      <div class="table-wrap">
+        <table id="rfTable">
+          <thead><tr><th>Reg</th><th>Hex</th><th>Dec</th></tr></thead>
+          <tbody></tbody>
+        </table>
       </div>
     </section>
 
     <section class="panel">
-      <h2>Memoria (0..255)</h2>
-      <div class="mem-wrap">
-        <table id="memTable"><thead><tr><th>Dir</th><th>Contenido</th></tr></thead><tbody></tbody></table>
+      <h2>Memoria Von Neumann (0..255)</h2>
+      <div class="table-wrap">
+        <table id="memTable">
+          <thead><tr><th>Dir</th><th>Tipo</th><th>Contenido</th></tr></thead>
+          <tbody></tbody>
+        </table>
       </div>
     </section>
   </div>
 
   <script>
     "use strict";
-    const WORD_MASK = 0xffff;
+
+    const WORD_BITS = 16;
+    const WORD_MASK = 0xFFFF;
     const SIGN_BIT = 0x8000;
     const MEMORY_SIZE = 256;
     const REGISTER_COUNT = 8;
+
     let runTimerId = null;
     let lastMemAccess = -1;
 
@@ -112,242 +271,428 @@ HALT</textarea>
       RT: 0,
       IR: null,
       PC: 0,
-      SP: 0,
       flags: { C: 0, S: 0, Z: 0, P: 0, V: 0 },
       memory: new Array(MEMORY_SIZE).fill(0),
-      halted: false
+      halted: false,
+      phase: "idle",
+      cycles: 0
     };
 
-    function toWord(v) { return v & WORD_MASK; }
-    function evenParity16(value) {
-      let x = toWord(value), ones = 0;
+    const ISA = new Set([
+      "LDI", "MOV", "ADD", "SUB", "AND", "OR", "XOR", "NOT", "SHL", "SHR",
+      "LD", "ST", "CMPZ", "CMP", "BZ", "BN", "BR", "HALT"
+    ]);
+
+    function toWord(v) { return Number(v) & WORD_MASK; }
+
+    function toSigned16(v) {
+      const w = toWord(v);
+      return (w & SIGN_BIT) ? w - 0x10000 : w;
+    }
+
+    function evenParity16(v) {
+      let x = toWord(v), ones = 0;
       while (x) { ones += x & 1; x >>>= 1; }
       return (ones % 2 === 0) ? 1 : 0;
     }
 
-    function resetCPU() {
-      cpu.RF.fill(0); cpu.RT = 0; cpu.IR = null; cpu.PC = 0; cpu.SP = 0;
-      cpu.flags.C = 0; cpu.flags.S = 0; cpu.flags.Z = 0; cpu.flags.P = 0; cpu.flags.V = 0;
-      cpu.memory.fill(0); cpu.halted = false; lastMemAccess = -1;
-      if (runTimerId !== null) { clearInterval(runTimerId); runTimerId = null; }
-    }
-
-    function updateFlagsFromValue(value) {
+    function updateSZP(value) {
       const w = toWord(value);
       cpu.flags.S = (w & SIGN_BIT) ? 1 : 0;
       cpu.flags.Z = (w === 0) ? 1 : 0;
       cpu.flags.P = evenParity16(w);
     }
 
-    function aluAddSigned(a, b) {
-      const aw = toWord(a), bw = toWord(b), sum = aw + bw, result = toWord(sum);
-      cpu.flags.C = (sum > WORD_MASK) ? 1 : 0;
-      const aS = !!(aw & SIGN_BIT), bS = !!(bw & SIGN_BIT), rS = !!(result & SIGN_BIT);
-      cpu.flags.V = (aS === bS && aS !== rS) ? 1 : 0;
-      updateFlagsFromValue(result);
-      return { value: result, flags: { ...cpu.flags } };
+    function setMessage(text, kind) {
+      const box = document.getElementById("messages");
+      box.textContent = text;
+      box.className = kind === "err" ? "msg-err" : kind === "warn" ? "msg-warn" : "msg-ok";
     }
 
-    function aluSubSigned(a, b) {
-      const aw = toWord(a), bw = toWord(b), diff = aw - bw, result = toWord(diff);
-      cpu.flags.C = (aw < bw) ? 1 : 0;
-      const aS = !!(aw & SIGN_BIT), bS = !!(bw & SIGN_BIT), rS = !!(result & SIGN_BIT);
-      cpu.flags.V = (aS !== bS && rS !== aS) ? 1 : 0;
-      updateFlagsFromValue(result);
-      return { value: result, flags: { ...cpu.flags } };
+    function fmtHex(v) {
+      return "0x" + toWord(v).toString(16).toUpperCase().padStart(4, "0");
     }
 
-    function aluShl(value) {
-      const w = toWord(value), result = toWord(w << 1);
-      cpu.flags.C = (w & SIGN_BIT) ? 1 : 0; cpu.flags.V = 0; updateFlagsFromValue(result);
-      return { value: result, flags: { ...cpu.flags } };
+    function assertAddr(addr, context) {
+      if (!Number.isInteger(addr) || addr < 0 || addr >= MEMORY_SIZE) {
+        throw new Error(context + " fuera de rango: " + addr);
+      }
     }
 
-    function aluShr(value) {
-      const w = toWord(value), result = toWord(w >>> 1);
-      cpu.flags.C = w & 1; cpu.flags.V = 0; updateFlagsFromValue(result);
-      return { value: result, flags: { ...cpu.flags } };
+    function parseRegister(token, lineNo) {
+      const m = /^R([0-7])$/i.exec(String(token).trim());
+      if (!m) throw new Error("Línea " + lineNo + ": registro inválido '" + token + "'");
+      return Number(m[1]);
     }
 
-    function aluNand(a, b) {
-      const result = toWord(~(toWord(a) & toWord(b)));
-      cpu.flags.C = 0; cpu.flags.V = 0; updateFlagsFromValue(result);
-      return { value: result, flags: { ...cpu.flags } };
-    }
-
-    function parseRegister(token) {
-      const m = /^R(\d+)$/i.exec(String(token).trim());
-      if (!m) throw new Error(`Registro inválido: ${token}`);
-      const idx = Number(m[1]);
-      if (idx < 0 || idx >= REGISTER_COUNT) throw new Error(`Registro fuera de rango: ${token}`);
-      return idx;
-    }
-
-    function parseNumber(token) {
-      const n = Number(String(token).trim());
-      if (!Number.isInteger(n)) throw new Error(`Número inválido: ${token}`);
+    function parseNumber(token, lineNo) {
+      const raw = String(token).trim().toLowerCase();
+      let n;
+      if (/^0x[0-9a-f]+$/.test(raw)) n = parseInt(raw, 16);
+      else if (/^0b[01]+$/.test(raw)) n = parseInt(raw.slice(2), 2);
+      else if (/^[+-]?\d+$/.test(raw)) n = parseInt(raw, 10);
+      else throw new Error("Línea " + lineNo + ": número inválido '" + token + "'");
+      if (!Number.isInteger(n)) throw new Error("Línea " + lineNo + ": número inválido '" + token + "'");
       return n;
     }
 
-    function assertAddr(addr, ctx) {
-      if (!Number.isInteger(addr) || addr < 0 || addr >= MEMORY_SIZE) throw new Error(`${ctx} fuera de rango: ${addr}`);
+    function parseAddressToken(token, lineNo) {
+      const m = /^\[(.+)\]$/.exec(String(token).trim());
+      if (!m) throw new Error("Línea " + lineNo + ": dirección inválida '" + token + "' (use [addr])");
+      return parseNumber(m[1], lineNo);
     }
 
     function parseLine(raw, lineNo) {
-      const clean = String(raw).replace(/\/\/.*$/, "").trim();
+      const clean = String(raw).replace(/;.*/, "").replace(/\/\/.*$/, "").trim();
       if (!clean) return null;
+
       const tokens = clean.replace(/,/g, " ").split(/\s+/).filter(Boolean);
       const op = tokens[0].toUpperCase();
       const args = tokens.slice(1);
-      const instr = { op, rd: null, rs: null, imm: null, addr: null, target: null };
 
-      const fail = (m) => { throw new Error(`Línea ${lineNo}: ${m}`); };
+      if (!ISA.has(op)) {
+        throw new Error("Línea " + lineNo + ": instrucción no soportada '" + op + "'");
+      }
+
+      const instr = { op, rd: null, rs: null, imm: null, addr: null, text: clean, line: lineNo };
+
       switch (op) {
-        case "LLI": case "LHI":
-          if (args.length !== 2) fail(`${op} requiere Rd, imm`);
-          instr.rd = parseRegister(args[0]); instr.imm = parseNumber(args[1]);
+        case "LDI":
+          if (args.length !== 2) throw new Error("Línea " + lineNo + ": LDI requiere Rn, imm");
+          instr.rd = parseRegister(args[0], lineNo);
+          instr.imm = parseNumber(args[1], lineNo);
           break;
-        case "ADDS": case "SUBS": case "NAND":
-          if (args.length !== 2) fail(`${op} requiere Rd, Rs`);
-          instr.rd = parseRegister(args[0]); instr.rs = parseRegister(args[1]);
+        case "MOV":
+        case "ADD":
+        case "SUB":
+        case "AND":
+        case "OR":
+        case "XOR":
+        case "CMP":
+          if (args.length !== 2) throw new Error("Línea " + lineNo + ": " + op + " requiere Rn, Rm");
+          instr.rd = parseRegister(args[0], lineNo);
+          instr.rs = parseRegister(args[1], lineNo);
           break;
-        case "SHL": case "SHR":
-          if (args.length !== 1) fail(`${op} requiere Rd`);
-          instr.rd = parseRegister(args[0]);
+        case "NOT":
+        case "SHL":
+        case "SHR":
+        case "CMPZ":
+          if (args.length !== 1) throw new Error("Línea " + lineNo + ": " + op + " requiere Rn");
+          instr.rd = parseRegister(args[0], lineNo);
           break;
         case "LD":
-          if (args.length !== 2) fail("LD requiere Rd, addr");
-          instr.rd = parseRegister(args[0]); instr.addr = parseNumber(args[1]); assertAddr(instr.addr, "Dirección LD");
+          if (args.length !== 2) throw new Error("Línea " + lineNo + ": LD requiere Rn, [addr]");
+          instr.rd = parseRegister(args[0], lineNo);
+          instr.addr = parseAddressToken(args[1], lineNo);
+          assertAddr(instr.addr, "Dirección LD");
           break;
         case "ST":
-          if (args.length !== 2) fail("ST requiere Rs, addr");
-          instr.rs = parseRegister(args[0]); instr.addr = parseNumber(args[1]); assertAddr(instr.addr, "Dirección ST");
+          if (args.length !== 2) throw new Error("Línea " + lineNo + ": ST requiere Rn, [addr]");
+          instr.rd = parseRegister(args[0], lineNo);
+          instr.addr = parseAddressToken(args[1], lineNo);
+          assertAddr(instr.addr, "Dirección ST");
           break;
-        case "BZ": case "BS": case "BR":
-          if (args.length !== 1) fail(`${op} requiere target`);
-          instr.target = parseNumber(args[0]); assertAddr(instr.target, `Target ${op}`);
+        case "BZ":
+        case "BN":
+        case "BR":
+          if (args.length !== 1) throw new Error("Línea " + lineNo + ": " + op + " requiere addr");
+          instr.addr = parseNumber(args[0], lineNo);
+          assertAddr(instr.addr, "Dirección salto");
           break;
         case "HALT":
-          if (args.length !== 0) fail("HALT no recibe operandos");
+          if (args.length !== 0) throw new Error("Línea " + lineNo + ": HALT no lleva operandos");
           break;
-        default:
-          fail(`Instrucción no soportada: ${op}`);
       }
+
       return instr;
+    }
+
+    function resetCPU() {
+      cpu.RF.fill(0);
+      cpu.RT = 0;
+      cpu.IR = null;
+      cpu.PC = 0;
+      cpu.flags.C = 0;
+      cpu.flags.S = 0;
+      cpu.flags.Z = 0;
+      cpu.flags.P = 0;
+      cpu.flags.V = 0;
+      cpu.memory.fill(0);
+      cpu.halted = false;
+      cpu.phase = "idle";
+      cpu.cycles = 0;
+      lastMemAccess = -1;
+      stopRun();
+    }
+
+    function stopRun() {
+      if (runTimerId !== null) {
+        clearInterval(runTimerId);
+        runTimerId = null;
+      }
     }
 
     function assemble(sourceText) {
       resetCPU();
       const lines = String(sourceText).split(/\r?\n/);
       const program = [];
+
       for (let i = 0; i < lines.length; i++) {
         const instr = parseLine(lines[i], i + 1);
         if (instr) program.push(instr);
       }
-      if (program.length > MEMORY_SIZE) throw new Error("Programa demasiado grande.");
-      for (let i = 0; i < program.length; i++) cpu.memory[i] = program[i];
+
+      if (program.length === 0) throw new Error("No hay instrucciones para ensamblar.");
+      if (program.length > MEMORY_SIZE) throw new Error("Programa demasiado grande para memoria.");
+
+      for (let i = 0; i < program.length; i++) {
+        cpu.memory[i] = program[i];
+      }
+
       cpu.PC = 0;
       cpu.halted = false;
+      cpu.phase = "fetch";
       return program.length;
+    }
+
+    function addWithFlags(a, b) {
+      const aw = toWord(a), bw = toWord(b);
+      const sum = aw + bw;
+      const res = toWord(sum);
+      cpu.flags.C = sum > WORD_MASK ? 1 : 0;
+      const aS = !!(aw & SIGN_BIT), bS = !!(bw & SIGN_BIT), rS = !!(res & SIGN_BIT);
+      cpu.flags.V = (aS === bS && aS !== rS) ? 1 : 0;
+      updateSZP(res);
+      return res;
+    }
+
+    function subWithFlags(a, b) {
+      const aw = toWord(a), bw = toWord(b);
+      const diff = aw - bw;
+      const res = toWord(diff);
+      cpu.flags.C = aw < bw ? 1 : 0;
+      const aS = !!(aw & SIGN_BIT), bS = !!(bw & SIGN_BIT), rS = !!(res & SIGN_BIT);
+      cpu.flags.V = (aS !== bS && rS !== aS) ? 1 : 0;
+      updateSZP(res);
+      return res;
+    }
+
+    function logicWithFlags(value) {
+      const res = toWord(value);
+      cpu.flags.C = 0;
+      cpu.flags.V = 0;
+      updateSZP(res);
+      return res;
+    }
+
+    function shiftLeftWithFlags(value) {
+      const w = toWord(value);
+      const res = toWord(w << 1);
+      cpu.flags.C = (w & SIGN_BIT) ? 1 : 0;
+      cpu.flags.V = 0;
+      updateSZP(res);
+      return res;
+    }
+
+    function shiftRightWithFlags(value) {
+      const w = toWord(value);
+      const res = toWord(w >>> 1);
+      cpu.flags.C = w & 1;
+      cpu.flags.V = 0;
+      updateSZP(res);
+      return res;
     }
 
     function step() {
       if (cpu.halted) return false;
+
+      cpu.phase = "fetch";
       assertAddr(cpu.PC, "PC");
       cpu.IR = cpu.memory[cpu.PC];
       const instr = cpu.IR;
-      if (!instr || typeof instr !== "object" || !instr.op) throw new Error(`Instrucción inválida en ${cpu.PC}`);
+      if (!instr || typeof instr !== "object" || !instr.op) {
+        throw new Error("No hay instrucción válida en la dirección " + cpu.PC);
+      }
 
+      cpu.phase = "decode";
+      const op = instr.op;
+      let writeTarget = null;
+      let writeValue = null;
       let jumped = false;
-      switch (instr.op) {
-        case "LLI": {
-          const cur = toWord(cpu.RF[instr.rd]);
-          cpu.RF[instr.rd] = toWord((cur & 0xff00) | (toWord(instr.imm) & 0x00ff));
+
+      cpu.phase = "execute";
+      switch (op) {
+        case "LDI":
+          cpu.RT = toWord(instr.imm);
+          writeTarget = instr.rd;
+          writeValue = cpu.RT;
+          cpu.flags.C = 0;
+          cpu.flags.V = 0;
+          updateSZP(writeValue);
           break;
-        }
-        case "LHI": {
-          const cur = toWord(cpu.RF[instr.rd]);
-          cpu.RF[instr.rd] = toWord((cur & 0x00ff) | ((toWord(instr.imm) & 0x00ff) << 8));
+        case "MOV":
+          cpu.RT = toWord(cpu.RF[instr.rs]);
+          writeTarget = instr.rd;
+          writeValue = cpu.RT;
+          cpu.flags.C = 0;
+          cpu.flags.V = 0;
+          updateSZP(writeValue);
           break;
-        }
-        case "ADDS": cpu.RF[instr.rd] = aluAddSigned(cpu.RF[instr.rd], cpu.RF[instr.rs]).value; break;
-        case "SUBS": cpu.RF[instr.rd] = aluSubSigned(cpu.RF[instr.rd], cpu.RF[instr.rs]).value; break;
+        case "ADD":
+          cpu.RT = addWithFlags(cpu.RF[instr.rd], cpu.RF[instr.rs]);
+          writeTarget = instr.rd;
+          writeValue = cpu.RT;
+          break;
+        case "SUB":
+          cpu.RT = subWithFlags(cpu.RF[instr.rd], cpu.RF[instr.rs]);
+          writeTarget = instr.rd;
+          writeValue = cpu.RT;
+          break;
+        case "AND":
+          cpu.RT = logicWithFlags(cpu.RF[instr.rd] & cpu.RF[instr.rs]);
+          writeTarget = instr.rd;
+          writeValue = cpu.RT;
+          break;
+        case "OR":
+          cpu.RT = logicWithFlags(cpu.RF[instr.rd] | cpu.RF[instr.rs]);
+          writeTarget = instr.rd;
+          writeValue = cpu.RT;
+          break;
+        case "XOR":
+          cpu.RT = logicWithFlags(cpu.RF[instr.rd] ^ cpu.RF[instr.rs]);
+          writeTarget = instr.rd;
+          writeValue = cpu.RT;
+          break;
+        case "NOT":
+          cpu.RT = logicWithFlags(~cpu.RF[instr.rd]);
+          writeTarget = instr.rd;
+          writeValue = cpu.RT;
+          break;
+        case "SHL":
+          cpu.RT = shiftLeftWithFlags(cpu.RF[instr.rd]);
+          writeTarget = instr.rd;
+          writeValue = cpu.RT;
+          break;
+        case "SHR":
+          cpu.RT = shiftRightWithFlags(cpu.RF[instr.rd]);
+          writeTarget = instr.rd;
+          writeValue = cpu.RT;
+          break;
         case "LD":
           assertAddr(instr.addr, "Dirección LD");
-          if (typeof cpu.memory[instr.addr] === "object" && cpu.memory[instr.addr] !== null) throw new Error("LD sobre celda de instrucción.");
-          cpu.RF[instr.rd] = toWord(cpu.memory[instr.addr] || 0); lastMemAccess = instr.addr;
+          if (typeof cpu.memory[instr.addr] === "object" && cpu.memory[instr.addr] !== null) {
+            throw new Error("LD sobre celda de instrucción en " + instr.addr);
+          }
+          cpu.RT = toWord(cpu.memory[instr.addr] || 0);
+          writeTarget = instr.rd;
+          writeValue = cpu.RT;
+          lastMemAccess = instr.addr;
+          cpu.flags.C = 0;
+          cpu.flags.V = 0;
+          updateSZP(writeValue);
           break;
         case "ST":
           assertAddr(instr.addr, "Dirección ST");
-          cpu.memory[instr.addr] = toWord(cpu.RF[instr.rs]); lastMemAccess = instr.addr;
+          cpu.RT = toWord(cpu.RF[instr.rd]);
+          cpu.memory[instr.addr] = cpu.RT;
+          lastMemAccess = instr.addr;
+          cpu.flags.C = 0;
+          cpu.flags.V = 0;
+          updateSZP(cpu.RT);
           break;
-        case "SHL": cpu.RF[instr.rd] = aluShl(cpu.RF[instr.rd]).value; break;
-        case "SHR": cpu.RF[instr.rd] = aluShr(cpu.RF[instr.rd]).value; break;
-        case "NAND": cpu.RF[instr.rd] = aluNand(cpu.RF[instr.rd], cpu.RF[instr.rs]).value; break;
-        case "BZ": if (cpu.flags.Z === 1) { cpu.PC = instr.target; jumped = true; } break;
-        case "BS": if (cpu.flags.S === 1) { cpu.PC = instr.target; jumped = true; } break;
-        case "BR": cpu.PC = instr.target; jumped = true; break;
-        case "HALT": cpu.halted = true; break;
-        default: throw new Error(`Opcode no soportado: ${instr.op}`);
+        case "CMPZ":
+          cpu.RT = toWord(cpu.RF[instr.rd]);
+          cpu.flags.C = 0;
+          cpu.flags.V = 0;
+          updateSZP(cpu.RT);
+          break;
+        case "CMP":
+          cpu.RT = subWithFlags(cpu.RF[instr.rd], cpu.RF[instr.rs]);
+          break;
+        case "BZ":
+          if (cpu.flags.Z === 1) {
+            cpu.PC = instr.addr;
+            jumped = true;
+          }
+          break;
+        case "BN":
+          if (cpu.flags.S === 1) {
+            cpu.PC = instr.addr;
+            jumped = true;
+          }
+          break;
+        case "BR":
+          cpu.PC = instr.addr;
+          jumped = true;
+          break;
+        case "HALT":
+          cpu.halted = true;
+          break;
+        default:
+          throw new Error("Opcode no soportado: " + op);
       }
 
+      cpu.phase = "writeback";
+      if (writeTarget !== null) {
+        cpu.RF[writeTarget] = toWord(writeValue);
+      }
+
+      cpu.phase = "pc-update";
       if (!cpu.halted && !jumped) {
         cpu.PC += 1;
         assertAddr(cpu.PC, "PC");
       }
+
+      cpu.cycles += 1;
+      if (cpu.halted) cpu.phase = "halted";
       return true;
     }
 
     function run() {
-      if (cpu.halted) return null;
-      if (runTimerId !== null) clearInterval(runTimerId);
-      const ms = Number(document.getElementById("speed").value) || 250;
+      if (cpu.halted) {
+        setMessage("La CPU ya está detenida (HALT).", "warn");
+        return;
+      }
+      stopRun();
+      const delay = Number(document.getElementById("speed").value) || 300;
       runTimerId = setInterval(() => {
         try {
           step();
           renderAll();
           if (cpu.halted) {
-            writeMessage("Ejecución detenida (HALT).");
-            clearInterval(runTimerId);
-            runTimerId = null;
+            stopRun();
+            setMessage("Ejecución detenida por HALT.", "ok");
           }
         } catch (err) {
-          writeMessage(`Error en ejecución: ${err.message}`, true);
+          stopRun();
           cpu.halted = true;
-          clearInterval(runTimerId);
-          runTimerId = null;
+          cpu.phase = "error";
           renderAll();
+          setMessage("Error en ejecución: " + err.message, "err");
         }
-      }, ms);
-      return runTimerId;
+      }, delay);
+      setMessage("Ejecución continua iniciada.", "ok");
     }
-
-    function writeMessage(text, isError = false) {
-      const box = document.getElementById("messages");
-      box.textContent = text;
-      box.style.color = isError ? "#b91c1c" : "#111827";
-    }
-
-    function fmtHex(v) { return "0x" + toWord(v).toString(16).toUpperCase().padStart(4, "0"); }
 
     function renderCPU() {
-      document.getElementById("pc").textContent = cpu.PC;
-      document.getElementById("sp").textContent = cpu.SP;
-      document.getElementById("rt").textContent = cpu.RT;
+      document.getElementById("pc").textContent = String(cpu.PC);
+      document.getElementById("rt").textContent = fmtHex(cpu.RT) + " (" + toSigned16(cpu.RT) + ")";
       document.getElementById("ir").textContent = cpu.IR && cpu.IR.op ? cpu.IR.op : "-";
+      document.getElementById("cycles").textContent = String(cpu.cycles);
+      document.getElementById("phase").textContent = cpu.phase;
 
-      ["C","S","Z","P","V"].forEach(k => {
+      ["C", "S", "Z", "P", "V"].forEach((k) => {
         const el = document.getElementById("f" + k);
         const on = cpu.flags[k] === 1;
-        el.textContent = `${k}:${cpu.flags[k]}`;
+        el.textContent = k + ":" + cpu.flags[k];
         el.classList.toggle("on", on);
       });
 
       const tbody = document.querySelector("#rfTable tbody");
       tbody.innerHTML = "";
-      for (let i = 0; i < cpu.RF.length; i++) {
+      for (let i = 0; i < REGISTER_COUNT; i++) {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td>R${i}</td><td>${fmtHex(cpu.RF[i])}</td><td>${cpu.RF[i]}</td>`;
+        tr.innerHTML = "<td>R" + i + "</td><td>" + fmtHex(cpu.RF[i]) + "</td><td>" + toSigned16(cpu.RF[i]) + "</td>";
         tbody.appendChild(tr);
       }
     }
@@ -355,65 +700,87 @@ HALT</textarea>
     function renderMemory() {
       const tbody = document.querySelector("#memTable tbody");
       tbody.innerHTML = "";
-      for (let i = 0; i < cpu.memory.length; i++) {
-        const v = cpu.memory[i];
+      for (let i = 0; i < MEMORY_SIZE; i++) {
+        const cell = cpu.memory[i];
         const tr = document.createElement("tr");
         if (i === cpu.PC && !cpu.halted) tr.classList.add("pc-row");
         if (i === lastMemAccess) tr.classList.add("last-mem");
-        let content;
-        if (typeof v === "object" && v !== null) {
-          const parts = [v.op, v.rd !== null ? `rd:${v.rd}` : "", v.rs !== null ? `rs:${v.rs}` : "", v.imm !== null ? `imm:${v.imm}` : "", v.addr !== null ? `addr:${v.addr}` : "", v.target !== null ? `target:${v.target}` : ""].filter(Boolean);
+
+        let kind = "data";
+        let content = fmtHex(cell || 0) + " (" + toSigned16(cell || 0) + ")";
+
+        if (typeof cell === "object" && cell !== null) {
+          kind = "instr";
+          const parts = [cell.op];
+          if (cell.rd !== null) parts.push("rd:R" + cell.rd);
+          if (cell.rs !== null) parts.push("rs:R" + cell.rs);
+          if (cell.imm !== null) parts.push("imm:" + cell.imm);
+          if (cell.addr !== null) parts.push("addr:" + cell.addr);
           content = parts.join(" ");
-        } else {
-          content = `${fmtHex(v || 0)} (${Number(v || 0)})`;
         }
-        tr.innerHTML = `<td>${i}</td><td style="text-align:left;">${content}</td>`;
+
+        tr.innerHTML = "<td>" + i + "</td><td>" + kind + "</td><td style='text-align:left;'>" + content + "</td>";
         tbody.appendChild(tr);
       }
     }
 
-    function renderAll() { renderCPU(); renderMemory(); }
+    function renderAll() {
+      renderCPU();
+      renderMemory();
+    }
 
     document.getElementById("btnAssemble").addEventListener("click", () => {
       try {
         const n = assemble(document.getElementById("source").value);
-        writeMessage(`Programa ensamblado correctamente. Instrucciones cargadas: ${n}.`);
         renderAll();
+        setMessage("Ensamblado correcto. Instrucciones cargadas: " + n + ".", "ok");
       } catch (err) {
-        writeMessage(`Error de ensamblado: ${err.message}`, true);
+        setMessage("Error de ensamblado: " + err.message, "err");
       }
     });
 
     document.getElementById("btnStep").addEventListener("click", () => {
       try {
+        stopRun();
         step();
-        writeMessage(cpu.halted ? "CPU detenida (HALT)." : `Paso ejecutado. PC=${cpu.PC}`);
         renderAll();
+        if (cpu.halted) setMessage("CPU detenida (HALT).", "ok");
+        else setMessage("Paso ejecutado. PC=" + cpu.PC, "ok");
       } catch (err) {
-        writeMessage(`Error en paso: ${err.message}`, true);
         cpu.halted = true;
+        cpu.phase = "error";
         renderAll();
+        setMessage("Error en paso: " + err.message, "err");
       }
     });
 
     document.getElementById("btnRun").addEventListener("click", () => {
-      writeMessage("Ejecución continua iniciada.");
       run();
+    });
+
+    document.getElementById("btnStop").addEventListener("click", () => {
+      stopRun();
+      setMessage("Ejecución detenida manualmente.", "warn");
     });
 
     document.getElementById("btnReset").addEventListener("click", () => {
       resetCPU();
-      writeMessage("CPU reiniciada.");
       renderAll();
+      setMessage("CPU reiniciada. Ensamble de nuevo para cargar programa.", "ok");
     });
 
-    const speed = document.getElementById("speed");
+    const speedInput = document.getElementById("speed");
     const speedValue = document.getElementById("speedValue");
-    speed.addEventListener("input", () => { speedValue.textContent = speed.value; });
+    speedInput.addEventListener("input", () => {
+      speedValue.textContent = speedInput.value;
+      if (runTimerId !== null) {
+        run();
+      }
+    });
 
     resetCPU();
     renderAll();
-    writeMessage("Listo. Escriba un programa y pulse Ensamblar.");
+    setMessage("Listo. Escriba un programa asmbasic y pulse Ensamblar.", "ok");
   </script>
 </body>
 </html>
