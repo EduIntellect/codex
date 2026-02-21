@@ -133,6 +133,22 @@ Para evitar ambigüedad entre implementaciones:
 - El campo `line` en `IR`/traza mantiene la correspondencia con la línea original del editor.
 - Los operandos `addr` en saltos y acceso a memoria se interpretan como **direcciones absolutas** de la tabla visual de memoria.
 
+#### Ejemplo de mapeo de líneas a direcciones
+Fuente:
+1. `LDI R0, 1`
+2. `// comentario`
+3. `` (línea vacía)
+4. `ADD R0, R1`
+5. `BZ 10`
+
+Mapeo en memoria (origen 0):
+- `mem[0] = LDI R0,1` (line=1)
+- `mem[1] = ADD R0,R1` (line=4)
+- `mem[2] = BZ 10` (line=5)
+
+Nótese que comentario y línea vacía no ocupan direcciones.
+
+
 ---
 
 ## 4) Arquitectura de la interfaz (frontend)
@@ -177,6 +193,11 @@ Para evitar ambigüedad entre implementaciones:
   - Módulo 3: núcleo CPU (máquina de estados por fases).
   - Módulo 4: renderizado UI y binding de eventos.
   - Módulo 5: presets de programas docentes.
+
+
+
+### Nota de alineación implementación/especificación
+- Recomendación fuerte: reflejar esta política en el simulador con validaciones centralizadas de rango (`PC` y `addr`) y transición a estado `error` visible en UI, evitando cualquier corrección automática implícita.
 
 ### Requisitos para embebido en iframe (Google Sites u otros)
 - No depender de backend ni rutas relativas externas críticas.
